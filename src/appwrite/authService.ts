@@ -1,17 +1,13 @@
-import { appwriteEndpoint, appwriteProjectId } from "@/constants";
+import { appwrite } from "@/constants";
+import type { AccountAuthType } from "@/types/appwriteTypes";
 import { Client, Account, ID } from "appwrite";
-
-export interface AccountAuthType {
-  email: string;
-  password: string;
-}
 
 export class AuthService {
   private readonly client = new Client();
   private readonly account;
 
   constructor() {
-    this.client.setEndpoint(appwriteEndpoint).setProject(appwriteProjectId);
+    this.client.setEndpoint(appwrite.endpoint).setProject(appwrite.projectId);
     this.account = new Account(this.client);
   }
 
@@ -26,7 +22,7 @@ export class AuthService {
 
       if (createdUser) {
         // Login user after creation
-        return this.loginUser({ email, password });
+        return await this.loginUser({ email, password });
       } else {
         return null;
       }
