@@ -1,17 +1,15 @@
-import { ModeToggle } from "./components/mode-toggle";
+import { RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider";
-import { Button } from "./components/ui/button";
+import { router } from "./router";
+import { Provider } from "react-redux";
+import store from "./app/store";
 
 export default function App() {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <main className="flex flex-col items-center gap-4">
-        <h1 className="p-8 text-center text-4xl font-bold tracking-tighter">
-          React Blog
-        </h1>
-        <ModeToggle />
-        <Button className="mx-auto w-fit">Hello Shadcn UI</Button>
-      </main>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   );
 }
