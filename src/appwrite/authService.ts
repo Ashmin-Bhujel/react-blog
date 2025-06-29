@@ -12,12 +12,13 @@ export class AuthService {
   }
 
   // Create user
-  async createAccount({ email, password }: AccountAuthType) {
+  async createAccount({ email, password, name }: AccountAuthType) {
     try {
       const createdUser = await this.account.create(
         ID.unique(),
         email,
-        password
+        password,
+        name
       );
 
       if (createdUser) {

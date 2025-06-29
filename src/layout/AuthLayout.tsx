@@ -1,25 +1,19 @@
 import type { StoreStateType } from "@/app/store";
-import Header from "@/components/Header";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 
-export default function DefaultLayout() {
+export default function AuthLayout() {
   const isLoggedIn = useSelector(
     (state: StoreStateType) => state.auth.isLoggedIn
   );
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/auth");
+    if (isLoggedIn) {
+      navigate("/");
     }
   }, [isLoggedIn, navigate]);
 
-  return (
-    <>
-      <Header />
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 }
