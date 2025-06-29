@@ -1,20 +1,24 @@
-import type { StoreStateType } from "@/app/store";
+import { login, logout } from "@/app/feature/authSlice";
+import { authService } from "@/appwrite";
 import Header from "@/components/Header";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Outlet } from "react-router-dom";
 
 export default function DefaultLayout() {
-  const isLoggedIn = useSelector(
-    (state: StoreStateType) => state.auth.isLoggedIn
-  );
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/auth");
-    }
-  }, [isLoggedIn, navigate]);
+    (async () => {
+      const response = await authService.getCurrentUser();
+
+      if (response) {
+        dispatch(login(response));
+      } else {
+        dispatch(logout());
+      }
+    })();
+  }, [dispatch]);
 
   return (
     <>

@@ -11,8 +11,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import type { AccountAuthType } from "@/types/appwriteTypes";
+import { authService } from "@/appwrite";
+import { useDispatch } from "react-redux";
+import { login } from "@/app/feature/authSlice";
 
 export default function Login() {
+  const { register, handleSubmit } = useForm<AccountAuthType>();
+  const dispatch = useDispatch();
+
+  async function onSubmitHandler(data: AccountAuthType) {
+    const response = await authService.loginUser(data);
+
+    if (response) {
+      const currentUser = await authService.getCurrentUser();
+      dispatch(login(currentUser));
+    }
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
@@ -28,7 +45,7 @@ export default function Login() {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmitHandler)} id="login-form">
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -36,6 +53,7 @@ export default function Login() {
                   id="email"
                   type="email"
                   placeholder="Enter your email"
+                  {...register("email")}
                   required
                 />
               </div>
@@ -47,6 +65,7 @@ export default function Login() {
                   id="password"
                   type="password"
                   placeholder="Enter your password"
+                  {...register("password")}
                   required
                 />
               </div>
@@ -54,7 +73,7 @@ export default function Login() {
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
+          <Button type="submit" form="login-form" className="w-full">
             Login
           </Button>
         </CardFooter>
