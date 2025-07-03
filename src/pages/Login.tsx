@@ -8,25 +8,53 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import type { AccountAuthType } from "@/types/appwriteTypes";
 import { authService } from "@/appwrite";
 import { useDispatch } from "react-redux";
 import { login } from "@/app/feature/authSlice";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import z from "zod/v4";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
 
 export default function Login() {
-  const { register, handleSubmit } = useForm<AccountAuthType>();
+  // Login form schema
+  const loginFormSchema = z.object({
+    email: z.email("Enter a valid email"),
+    password: z
+      .string()
+      .trim()
+      .min(8, "Password must have minimum of 8 characters"),
+  });
+
+  // Login form
+  const loginForm = useForm<z.infer<typeof loginFormSchema>>({
+    resolver: zodResolver(loginFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   const dispatch = useDispatch();
 
-  async function onSubmitHandler(data: AccountAuthType) {
+  async function onSubmitHandler(data: z.infer<typeof loginFormSchema>) {
     const response = await authService.loginUser(data);
 
     if (response) {
       const currentUser = await authService.getCurrentUser();
       dispatch(login(currentUser));
+    } else {
+      loginForm.setError("root", { message: "Invalid user credentials" });
     }
   }
 
@@ -45,32 +73,60 @@ export default function Login() {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmitHandler)} id="login-form">
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  {...register("email")}
-                  required
-                />
+          <Form {...loginForm}>
+            <form
+              onSubmit={loginForm.handleSubmit(onSubmitHandler)}
+              className="space-y-6"
+              id="login-form"
+            >
+              {/* Email */}
+              <FormField
+                control={loginForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Password */}
+              <FormField
+                control={loginForm.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+
+            {/* Display root form errors */}
+            {loginForm.formState.errors.root && (
+              <div className="mt-2 text-sm text-red-500">
+                {loginForm.formState.errors.root.message}
               </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  {...register("password")}
-                  required
-                />
-              </div>
-            </div>
-          </form>
+            )}
+          </Form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button type="submit" form="login-form" className="w-full">
