@@ -21,23 +21,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import z from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
+import { AuthFormSchema, type AuthFormType } from "@/types/authFormType";
 
 export default function Login() {
-  // Login form schema
-  const loginFormSchema = z.object({
-    email: z.email("Enter a valid email"),
-    password: z
-      .string()
-      .trim()
-      .min(8, "Password must have minimum of 8 characters"),
-  });
-
   // Login form
-  const loginForm = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
+  const loginForm = useForm<AuthFormType>({
+    resolver: zodResolver(AuthFormSchema),
     mode: "onChange",
     defaultValues: {
       email: "",
@@ -47,7 +38,7 @@ export default function Login() {
 
   const dispatch = useDispatch();
 
-  async function onSubmitHandler(data: z.infer<typeof loginFormSchema>) {
+  async function onSubmitHandler(data: AuthFormType) {
     const response = await authService.loginUser(data);
 
     if (response) {

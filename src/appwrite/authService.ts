@@ -1,5 +1,5 @@
 import { appwrite } from "@/constants";
-import type { AccountAuthType } from "@/types/appwriteTypes";
+import type { AuthFormType } from "@/types/authFormType";
 import { Client, Account, ID } from "appwrite";
 
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
   }
 
   // Create user
-  async createAccount({ email, password, name }: AccountAuthType) {
+  async createAccount({ email, password, name }: AuthFormType) {
     try {
       const createdUser = await this.account.create(
         ID.unique(),
@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   // Login user
-  async loginUser({ email, password }: AccountAuthType) {
+  async loginUser({ email, password }: AuthFormType) {
     try {
       const currentSession = await this.account.createEmailPasswordSession(
         email,

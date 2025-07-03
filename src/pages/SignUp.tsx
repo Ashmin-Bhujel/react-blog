@@ -19,26 +19,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { AuthFormSchema, type AuthFormType } from "@/types/authFormType";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import z from "zod/v4";
 
 export default function SignUp() {
-  // Signup form schema
-  const signupFormSchema = z.object({
-    name: z.string().trim().min(2, "Name must have at least 2 characters"),
-    email: z.email("Enter a valid email"),
-    password: z
-      .string()
-      .trim()
-      .min(8, "Password must have minimum of 8 characters"),
-  });
-
   // Signup form
-  const signupForm = useForm<z.infer<typeof signupFormSchema>>({
-    resolver: zodResolver(signupFormSchema),
+  const signupForm = useForm<AuthFormType>({
+    resolver: zodResolver(AuthFormSchema),
     mode: "onChange",
     defaultValues: {
       name: "",
@@ -49,7 +39,7 @@ export default function SignUp() {
 
   const dispatch = useDispatch();
 
-  async function onSubmitHandler(data: z.infer<typeof signupFormSchema>) {
+  async function onSubmitHandler(data: AuthFormType) {
     const response = await authService.createAccount(data);
 
     if (response) {
