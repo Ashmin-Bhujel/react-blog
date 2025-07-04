@@ -180,4 +180,13 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  h1.tiptap-heading {
+    @apply text-2xl font-bold;
+  }
+  h2.tiptap-heading {
+    @apply text-xl font-bold;
+  }
+  h3.tiptap-heading {
+    @apply text-lg font-bold;
+  }
 }

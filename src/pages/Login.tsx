@@ -113,7 +113,7 @@ export default function Login() {
 
             {/* Display root form errors */}
             {loginForm.formState.errors.root && (
-              <div className="mt-2 text-sm text-red-500">
+              <div className="text-destructive mt-2 text-sm">
                 {loginForm.formState.errors.root.message}
               </div>
             )}
