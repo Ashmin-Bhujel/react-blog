@@ -24,8 +24,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { AuthFormSchema, type AuthFormType } from "@/types/authFormType";
+import { Eye, EyeClosed } from "lucide-react";
+import { useState } from "react";
 
 export default function Login() {
+  const [seePassword, setSeePassword] = useState(false);
+
   // Login form
   const loginForm = useForm<AuthFormType>({
     resolver: zodResolver(AuthFormSchema),
@@ -98,12 +102,20 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        {...field}
-                      />
+                      <div className="flex items-center">
+                        <Input
+                          id="password"
+                          type={seePassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          {...field}
+                        />
+                        <Button
+                          variant={"outline"}
+                          onClick={() => setSeePassword(!seePassword)}
+                        >
+                          {seePassword ? <Eye /> : <EyeClosed />}
+                        </Button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

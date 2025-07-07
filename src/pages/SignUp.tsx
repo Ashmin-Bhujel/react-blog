@@ -21,11 +21,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { AuthFormSchema, type AuthFormType } from "@/types/authFormType";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeClosed } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 export default function SignUp() {
+  const [seePassword, setSeePassword] = useState(false);
+
   // Signup form
   const signupForm = useForm<AuthFormType>({
     resolver: zodResolver(AuthFormSchema),
@@ -117,12 +121,20 @@ export default function SignUp() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        {...field}
-                      />
+                      <div className="flex items-center">
+                        <Input
+                          id="password"
+                          type={seePassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          {...field}
+                        />
+                        <Button
+                          variant={"outline"}
+                          onClick={() => setSeePassword(!seePassword)}
+                        >
+                          {seePassword ? <Eye /> : <EyeClosed />}
+                        </Button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

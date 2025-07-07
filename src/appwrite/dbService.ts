@@ -12,12 +12,12 @@ export class DbService {
   }
 
   // Create article
-  async createArticle(slug: string, data: ArticlesCollectionType) {
+  async createArticle(articleId: string, data: ArticlesCollectionType) {
     try {
       const response = await this.databases.createDocument(
         appwrite.blogsDatabaseId,
         appwrite.articlesCollectionId,
-        slug,
+        articleId,
         data
       );
 
@@ -32,12 +32,15 @@ export class DbService {
   }
 
   // Update article
-  async updateArticle(slug: string, data: Partial<ArticlesCollectionType>) {
+  async updateArticle(
+    articleId: string,
+    data: Partial<ArticlesCollectionType>
+  ) {
     try {
       const response = await this.databases.updateDocument(
         appwrite.blogsDatabaseId,
         appwrite.articlesCollectionId,
-        slug,
+        articleId,
         data
       );
 
@@ -52,12 +55,12 @@ export class DbService {
   }
 
   // Delete article
-  async deleteArticle(slug: string) {
+  async deleteArticle(articleId: string) {
     try {
       await this.databases.deleteDocument(
         appwrite.blogsDatabaseId,
         appwrite.articlesCollectionId,
-        slug
+        articleId
       );
     } catch (error) {
       console.error("Failed to delete the article:", error);
@@ -65,12 +68,12 @@ export class DbService {
   }
 
   // Get article by ID
-  async getArticleById(slug: string) {
+  async getArticleById(articleId: string) {
     try {
       const response = await this.databases.getDocument(
         appwrite.blogsDatabaseId,
         appwrite.articlesCollectionId,
-        slug
+        articleId
       );
 
       if (response) {
@@ -99,6 +102,25 @@ export class DbService {
       }
     } catch (error) {
       console.error("Failed to get the published articles:", error);
+    }
+  }
+
+  // Get all articles by user ID
+  async getArticlesByUserId(userId: string) {
+    try {
+      const response = await this.databases.listDocuments(
+        appwrite.blogsDatabaseId,
+        appwrite.articlesCollectionId,
+        [Query.equal("userId", userId)]
+      );
+
+      if (response) {
+        return response;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Failed to get articles by user ID:", error);
     }
   }
 }
